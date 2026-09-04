@@ -1,29 +1,13 @@
 <mat-nav-list>
-      <a mat-list-item routerLink="/">
-        Dashboard
-      </a>
-
-      <a mat-list-item routerLink="/accounts">
-        Contas
-      </a>
-
-      <a mat-list-item routerLink="/incomes">
-        Receitas
-      </a>
-
-      <a mat-list-item routerLink="/expenses">
-        Despesas
-      </a>
-
-      <a mat-list-item routerLink="/cards">
-        Cartões
-      </a>
-
-      <a mat-list-item routerLink="/budget">
-        Orçamento
-      </a>
-
-      <a mat-list-item routerLink="/settings">
-        Configurações
-      </a>
-    </mat-nav-list>
+  @for (item of items; track item.route) {
+    <a
+      mat-list-item
+      [routerLink]="item.route"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+    >
+      <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+      <span matListItemTitle>{{ item.label }}</span>
+    </a>
+  }
+</mat-nav-list>
