@@ -1,0 +1,75 @@
+<div class="space-y-6">
+  <header>
+    <h1 class="text-2xl font-semibold">Dashboard</h1>
+    <p>Visão geral</p>
+  </header>
+
+  <section class="grid gap-4 md:grid-cols-3">
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>account_balance_wallet</mat-icon>
+        <mat-card-title>Saldo total</mat-card-title>
+        <mat-card-subtitle>Saldo atual</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p class="text-2xl font-semibold">R$ {{ summary.balance | number: '1.2-2' }}</p>
+        <p>
+          {{ monthlyBalance >= 0 ? '+' : '-' }}
+          R$ {{ monthlyBalanceAbs | number: '1.2-2' }}
+          este mês
+        </p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>trending_up</mat-icon>
+        <mat-card-title>Receitas</mat-card-title>
+        <mat-card-subtitle>Este mês</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p class="text-2xl font-semibold">R$ {{ summary.income | number: '1.2-2' }}</p>
+        <p>{{ summary.incomeCount }} lançamentos</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>trending_down</mat-icon>
+        <mat-card-title>Despesas</mat-card-title>
+        <mat-card-subtitle>Este mês</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p class="text-2xl font-semibold">R$ {{ summary.expenses | number: '1.2-2' }}</p>
+        <p>{{ summary.expenseCount }} lançamentos</p>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  <section class="grid gap-4 lg:grid-cols-2">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Evolução financeira</mat-card-title>
+        <mat-card-subtitle>Últimos 6 meses</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div echarts [options]="evolutionChartOptions" class="h-72"></div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Despesas por categoria</mat-card-title>
+        <mat-card-subtitle>Este mês</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div echarts [options]="expensesChartOptions" class="h-72"></div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>
