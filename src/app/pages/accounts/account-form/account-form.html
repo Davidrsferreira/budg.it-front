@@ -1,0 +1,63 @@
+<h2 mat-dialog-title>
+  {{ isEditMode ? 'Editar conta' : 'Nova conta' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="flex flex-col gap-4">
+    <mat-form-field>
+      <mat-label>Nome</mat-label>
+
+      <input matInput formControlName="name" placeholder="Ex.: Conta Corrente" />
+
+      @if (form.controls.name.hasError('required')) {
+        <mat-error> Informe o nome da conta. </mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Instituição</mat-label>
+
+      <input matInput formControlName="institution" placeholder="Ex.: Nubank" />
+
+      @if (form.controls.institution.hasError('required')) {
+        <mat-error> Informe a instituição. </mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Tipo</mat-label>
+
+      <mat-select formControlName="type">
+        <mat-option value="checking"> Conta corrente </mat-option>
+
+        <mat-option value="savings"> Poupança </mat-option>
+
+        <mat-option value="cash"> Dinheiro </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Saldo inicial</mat-label>
+
+      <span matTextPrefix>R$&nbsp;</span>
+
+      <input matInput appCurrency formControlName="balance" />
+
+      @if (form.controls.balance.hasError('required')) {
+        <mat-error> Informe o saldo. </mat-error>
+      }
+
+      @if (form.controls.balance.hasError('min')) {
+        <mat-error> O saldo não pode ser negativo. </mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="onCancel()">Cancelar</button>
+
+  <button mat-flat-button type="button" (click)="onSubmit()">
+    {{ isEditMode ? 'Salvar alterações' : 'Salvar' }}
+  </button>
+</mat-dialog-actions>
