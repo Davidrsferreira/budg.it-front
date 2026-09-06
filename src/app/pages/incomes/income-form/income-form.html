@@ -44,12 +44,16 @@
       <mat-label>Conta</mat-label>
 
       <mat-select formControlName="accountId">
-        <mat-option [value]="1"> Conta Corrente </mat-option>
-
-        <mat-option [value]="2"> Poupança </mat-option>
-
-        <mat-option [value]="3"> Carteira </mat-option>
+        @for (account of accountsStore.accounts(); track account.id) {
+          <mat-option [value]="account.id">
+            {{ account.name }}
+          </mat-option>
+        }
       </mat-select>
+
+      @if (form.controls.accountId.hasError('required')) {
+        <mat-error> Selecione uma conta. </mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field>

@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { CurrencyDirective } from '../../../shared/directives/currency/currency.directive';
 import { Income } from '../models/income';
+import { AccountsStore } from '../../accounts/services/accounts.store';
 
 @Component({
   selector: 'app-income-form',
@@ -25,6 +26,9 @@ import { Income } from '../models/income';
   styleUrl: './income-form.css',
 })
 export class IncomeForm {
+
+  readonly accountsStore = inject(AccountsStore);
+
   readonly income = inject<Income | null>(MAT_DIALOG_DATA, {
     optional: true,
   });
@@ -37,7 +41,7 @@ export class IncomeForm {
     description: [this.income?.description ?? '', Validators.required],
     amount: [this.income?.amount ?? 0, [Validators.required, Validators.min(0.01)]],
     date: [this.income?.date ?? this.getToday(), Validators.required],
-    accountId: [this.income?.accountId ?? 1, Validators.required],
+    accountId: [this.income?.accountId ?? null, Validators.required],
     category: [this.income?.category ?? '', Validators.required],
   });
 
