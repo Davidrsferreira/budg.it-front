@@ -23,7 +23,9 @@
       </mat-card-header>
 
       <mat-card-content>
-        <p class="text-2xl font-semibold">R$ {{ expensesStore.totalExpenses() | number: '1.2-2' }}</p>
+        <p class="text-2xl font-semibold">
+          R$ {{ expensesStore.totalExpenses() | number: '1.2-2' }}
+        </p>
       </mat-card-content>
     </mat-card>
   </section>
@@ -53,7 +55,11 @@
               <p class="text-2xl font-semibold">R$ {{ expense.amount | number: '1.2-2' }}</p>
 
               <p class="mt-2">
-                {{ expense.date }}
+                {{ expense.date | date: 'dd/MM/yyyy' }}
+              </p>
+
+              <p class="mt-1">
+                {{ getAccountName(expense.accountId) }}
               </p>
             </div>
           </mat-card-content>

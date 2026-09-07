@@ -1,4 +1,4 @@
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -10,10 +10,11 @@ import { IncomeForm } from './income-form/income-form';
 import { Income } from './models/income';
 import { IncomeDeleteDialog } from './income-delete-dialog/income-delete-dialog';
 import { IncomesStore } from './services/incomes.store';
+import { AccountsStore } from '../accounts/services/accounts.store';
 
 @Component({
   selector: 'app-incomes',
-  imports: [DecimalPipe, MatButtonModule, MatCardModule, MatIconModule, MatDialogModule],
+  imports: [DecimalPipe, MatButtonModule, MatCardModule, MatIconModule, MatDialogModule, DatePipe],
   templateUrl: './incomes.html',
   styleUrl: './incomes.css',
 })
@@ -21,6 +22,8 @@ export class Incomes {
   private readonly dialog = inject(MatDialog);
 
   readonly incomesStore = inject(IncomesStore);
+
+  readonly accountsStore = inject(AccountsStore);
 
   onCreateIncome(): void {
     const dialogRef = this.dialog.open(IncomeForm, {
@@ -34,14 +37,6 @@ export class Incomes {
 
       this.incomesStore.add(income);
     });
-  }
-
-  private getNextIncomeId(incomes: Income[]): number {
-    if (incomes.length === 0) {
-      return 1;
-    }
-
-    return Math.max(...incomes.map((income) => income.id)) + 1;
   }
 
   onEditIncome(income: Income): void {
@@ -72,5 +67,9 @@ export class Incomes {
 
       this.incomesStore.remove(income.id);
     });
+  }
+
+  getAccountName(accountId: number): string {
+    return this.accountsStore.findById(accountId)?.name ?? 'Conta não encontrada';
   }
 }

@@ -1,4 +1,4 @@
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -10,10 +10,11 @@ import { ExpenseDeleteDialog } from './expense-delete-dialog/expense-delete-dial
 import { ExpenseForm } from './expense-form/expense-form';
 import { Expense } from './models/expense';
 import { ExpensesStore } from './services/expenses.store';
+import { AccountsStore } from '../accounts/services/accounts.store';
 
 @Component({
   selector: 'app-expenses',
-  imports: [DecimalPipe, MatButtonModule, MatCardModule, MatDialogModule, MatIconModule],
+  imports: [DecimalPipe, MatButtonModule, MatCardModule, MatDialogModule, MatIconModule, DatePipe],
   templateUrl: './expenses.html',
   styleUrl: './expenses.css',
 })
@@ -21,6 +22,8 @@ export class Expenses {
   private readonly dialog = inject(MatDialog);
 
   readonly expensesStore = inject(ExpensesStore);
+
+  readonly accountsStore = inject(AccountsStore);
 
   onCreateExpense(): void {
     const dialogRef = this.dialog.open(ExpenseForm, {
@@ -66,11 +69,7 @@ export class Expenses {
     });
   }
 
-  private getNextExpenseId(expenses: Expense[]): number {
-    if (expenses.length === 0) {
-      return 1;
-    }
-
-    return Math.max(...expenses.map((expense) => expense.id)) + 1;
+  getAccountName(accountId: number): string {
+    return this.accountsStore.findById(accountId)?.name ?? 'Conta não encontrada';
   }
 }
