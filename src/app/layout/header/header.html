@@ -1,0 +1,26 @@
+<mat-toolbar>
+  <span>Budg.it</span>
+
+  <span class="spacer"></span>
+
+  <button
+    mat-button
+    [matMenuTriggerFor]="userMenu"
+  >
+    <mat-icon>account_circle</mat-icon>
+    <span>David</span>
+    <mat-icon>arrow_drop_down</mat-icon>
+  </button>
+
+  <mat-menu #userMenu="matMenu">
+    <button mat-menu-item>
+      <mat-icon>person</mat-icon>
+      <span>Perfil</span>
+    </button>
+
+    <button mat-menu-item>
+      <mat-icon>logout</mat-icon>
+      <span>Sair</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>

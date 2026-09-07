@@ -1,1 +1,13 @@
-<router-outlet />
+<app-header />
+
+<mat-sidenav-container>
+  <mat-sidenav mode="side" opened>
+    <app-navigation />
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <main>
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,91 @@
+<h2 mat-dialog-title>
+  {{ isEditMode ? 'Editar despesa' : 'Nova despesa' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="flex flex-col gap-4">
+    <mat-form-field>
+      <mat-label>Descrição</mat-label>
+
+      <input matInput formControlName="description" placeholder="Ex.: Supermercado" />
+
+      @if (form.controls.description.hasError('required')) {
+        <mat-error> Informe a descrição. </mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Valor</mat-label>
+
+      <span matTextPrefix>R$&nbsp;</span>
+
+      <input matInput appCurrency formControlName="amount" />
+
+      @if (form.controls.amount.hasError('required')) {
+        <mat-error> Informe o valor. </mat-error>
+      }
+
+      @if (form.controls.amount.hasError('min')) {
+        <mat-error> O valor deve ser maior que zero. </mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Data</mat-label>
+
+      <input matInput type="date" formControlName="date" />
+
+      @if (form.controls.date.hasError('required')) {
+        <mat-error> Informe a data. </mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Conta</mat-label>
+
+      <mat-select formControlName="accountId">
+        @for (account of accountsStore.accounts(); track account.id) {
+          <mat-option [value]="account.id">
+            {{ account.name }}
+          </mat-option>
+        }
+      </mat-select>
+
+      @if (form.controls.accountId.hasError('required')) {
+        <mat-error> Selecione uma conta. </mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Categoria</mat-label>
+
+      <mat-select formControlName="category">
+        <mat-option value="Moradia"> Moradia </mat-option>
+
+        <mat-option value="Alimentação"> Alimentação </mat-option>
+
+        <mat-option value="Transporte"> Transporte </mat-option>
+
+        <mat-option value="Lazer"> Lazer </mat-option>
+
+        <mat-option value="Saúde"> Saúde </mat-option>
+
+        <mat-option value="Educação"> Educação </mat-option>
+
+        <mat-option value="Outros"> Outros </mat-option>
+      </mat-select>
+
+      @if (form.controls.category.hasError('required')) {
+        <mat-error> Selecione uma categoria. </mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="onCancel()">Cancelar</button>
+
+  <button mat-flat-button type="button" (click)="onSubmit()">
+    {{ isEditMode ? 'Salvar alterações' : 'Salvar' }}
+  </button>
+</mat-dialog-actions>
