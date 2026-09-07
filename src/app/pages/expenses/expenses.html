@@ -23,7 +23,7 @@
       </mat-card-header>
 
       <mat-card-content>
-        <p class="text-2xl font-semibold">R$ {{ totalExpenses() | number: '1.2-2' }}</p>
+        <p class="text-2xl font-semibold">R$ {{ expensesStore.totalExpenses() | number: '1.2-2' }}</p>
       </mat-card-content>
     </mat-card>
   </section>
@@ -34,7 +34,7 @@
     </div>
 
     <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      @for (expense of expenses(); track expense.id) {
+      @for (expense of expensesStore.expenses(); track expense.id) {
         <mat-card>
           <mat-card-header>
             <mat-icon mat-card-avatar> payments </mat-icon>

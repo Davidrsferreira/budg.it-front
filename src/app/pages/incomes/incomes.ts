@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, signal, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -9,6 +9,7 @@ import { IncomeForm } from './income-form/income-form';
 
 import { Income } from './models/income';
 import { IncomeDeleteDialog } from './income-delete-dialog/income-delete-dialog';
+import { IncomesStore } from './services/incomes.store';
 
 @Component({
   selector: 'app-incomes',
@@ -19,28 +20,7 @@ import { IncomeDeleteDialog } from './income-delete-dialog/income-delete-dialog'
 export class Incomes {
   private readonly dialog = inject(MatDialog);
 
-  readonly incomes = signal<Income[]>([
-    {
-      id: 1,
-      description: 'Salário',
-      amount: 8000,
-      date: '2026-09-05',
-      accountId: 1,
-      category: 'Salário',
-    },
-    {
-      id: 2,
-      description: 'Freelance',
-      amount: 1500,
-      date: '2026-09-10',
-      accountId: 1,
-      category: 'Freelance',
-    },
-  ]);
-
-  readonly totalIncome = computed(() =>
-    this.incomes().reduce((total, income) => total + income.amount, 0),
-  );
+  readonly incomesStore = inject(IncomesStore);
 
   onCreateIncome(): void {
     const dialogRef = this.dialog.open(IncomeForm, {
@@ -52,13 +32,7 @@ export class Incomes {
         return;
       }
 
-      this.incomes.update((incomes) => [
-        ...incomes,
-        {
-          id: this.getNextIncomeId(incomes),
-          ...income,
-        },
-      ]);
+      this.incomesStore.add(income);
     });
   }
 
@@ -81,16 +55,7 @@ export class Incomes {
         return;
       }
 
-      this.incomes.update((incomes) =>
-        incomes.map((item) =>
-          item.id === income.id
-            ? {
-                id: income.id,
-                ...updatedIncome,
-              }
-            : item,
-        ),
-      );
+      this.incomesStore.update(income.id, updatedIncome);
     });
   }
 
@@ -105,7 +70,7 @@ export class Incomes {
         return;
       }
 
-      this.incomes.update((incomes) => incomes.filter((item) => item.id !== income.id));
+      this.incomesStore.remove(income.id);
     });
   }
 }

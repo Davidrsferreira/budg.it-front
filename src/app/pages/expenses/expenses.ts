@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ExpenseDeleteDialog } from './expense-delete-dialog/expense-delete-dialog';
 import { ExpenseForm } from './expense-form/expense-form';
 import { Expense } from './models/expense';
+import { ExpensesStore } from './services/expenses.store';
 
 @Component({
   selector: 'app-expenses',
@@ -17,38 +18,9 @@ import { Expense } from './models/expense';
   styleUrl: './expenses.css',
 })
 export class Expenses {
-  readonly expenses = signal<Expense[]>([
-    {
-      id: 1,
-      description: 'Aluguel',
-      amount: 2000,
-      date: '2026-09-05',
-      accountId: 1,
-      category: 'Moradia',
-    },
-    {
-      id: 2,
-      description: 'Supermercado',
-      amount: 850,
-      date: '2026-09-06',
-      accountId: 1,
-      category: 'Alimentação',
-    },
-    {
-      id: 3,
-      description: 'Internet',
-      amount: 120,
-      date: '2026-09-07',
-      accountId: 1,
-      category: 'Moradia',
-    },
-  ]);
-
-  readonly totalExpenses = computed(() =>
-    this.expenses().reduce((total, expense) => total + expense.amount, 0),
-  );
-
   private readonly dialog = inject(MatDialog);
+
+  readonly expensesStore = inject(ExpensesStore);
 
   onCreateExpense(): void {
     const dialogRef = this.dialog.open(ExpenseForm, {
@@ -60,13 +32,7 @@ export class Expenses {
         return;
       }
 
-      this.expenses.update((expenses) => [
-        ...expenses,
-        {
-          id: this.getNextExpenseId(expenses),
-          ...expense,
-        },
-      ]);
+      this.expensesStore.add(expense);
     });
   }
 
@@ -81,16 +47,7 @@ export class Expenses {
         return;
       }
 
-      this.expenses.update((expenses) =>
-        expenses.map((item) =>
-          item.id === expense.id
-            ? {
-                id: expense.id,
-                ...updatedExpense,
-              }
-            : item,
-        ),
-      );
+      this.expensesStore.update(expense.id, updatedExpense);
     });
   }
 
@@ -105,7 +62,7 @@ export class Expenses {
         return;
       }
 
-      this.expenses.update((expenses) => expenses.filter((item) => item.id !== expense.id));
+      this.expensesStore.remove(expense.id);
     });
   }
 

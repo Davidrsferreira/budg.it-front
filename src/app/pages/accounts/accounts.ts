@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
@@ -9,6 +9,7 @@ import { AccountForm } from './account-form/account-form';
 import { AccountDeleteDialog } from './account-delete-dialog/account-delete-dialog';
 import { Account } from './models/account';
 import { AccountsStore } from './services/accounts.store';
+import { AccountBalanceService } from './services/account-balance.service';
 @Component({
   imports: [DecimalPipe, MatCardModule, MatIconModule, MatChipsModule, MatButtonModule],
   selector: 'app-accounts',
@@ -19,6 +20,13 @@ export class Accounts {
   private readonly dialog = inject(MatDialog);
 
   readonly accountsStore = inject(AccountsStore);
+  readonly accountBalanceService = inject(AccountBalanceService);
+  readonly totalBalance = computed(() =>
+    Array.from(this.accountBalanceService.balances().values()).reduce(
+      (total, balance) => total + balance,
+      0,
+    ),
+  );
 
   getAccountTypeLabel(type: Account['type']): string {
     switch (type) {
