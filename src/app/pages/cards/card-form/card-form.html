@@ -1,0 +1,59 @@
+<h2 mat-dialog-title>
+  {{ card ? 'Editar cartão' : 'Novo cartão' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="grid gap-4 pt-2">
+    <mat-form-field>
+      <mat-label>Nome</mat-label>
+
+      <input matInput formControlName="name" placeholder="Ex.: Cartão Principal" />
+
+      @if (form.controls.name.hasError('required')) {
+        <mat-error> Informe o nome do cartão. </mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Instituição</mat-label>
+
+      <input matInput formControlName="institution" placeholder="Ex.: Banco Principal" />
+
+      @if (form.controls.institution.hasError('required')) {
+        <mat-error> Informe a instituição. </mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Limite</mat-label>
+
+      <input matInput appCurrency formControlName="limit" />
+
+      <span matTextPrefix>R$&nbsp;</span>
+
+      @if (form.controls.limit.hasError('min')) {
+        <mat-error> O limite deve ser maior que zero. </mat-error>
+      }
+    </mat-form-field>
+
+    <div class="grid grid-cols-2 gap-4">
+      <mat-form-field>
+        <mat-label>Dia de fechamento</mat-label>
+
+        <input matInput type="number" formControlName="closingDay" min="1" max="31" />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Dia de vencimento</mat-label>
+
+        <input matInput type="number" formControlName="dueDay" min="1" max="31" />
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancelar</button>
+
+  <button mat-flat-button type="button" (click)="save()">Salvar</button>
+</mat-dialog-actions>
