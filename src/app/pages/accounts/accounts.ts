@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
@@ -21,12 +21,6 @@ export class Accounts {
 
   readonly accountsStore = inject(AccountsStore);
   readonly accountBalanceService = inject(AccountBalanceService);
-  readonly totalBalance = computed(() =>
-    Array.from(this.accountBalanceService.balances().values()).reduce(
-      (total, balance) => total + balance,
-      0,
-    ),
-  );
 
   getAccountTypeLabel(type: Account['type']): string {
     switch (type) {

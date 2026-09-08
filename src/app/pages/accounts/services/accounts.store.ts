@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 import { Account } from '../models/account';
 
@@ -29,10 +29,6 @@ export class AccountsStore {
       balance: 750,
     },
   ]);
-
-  readonly totalBalance = computed(() =>
-    this.accounts().reduce((total, account) => total + account.balance, 0),
-  );
 
   add(account: Omit<Account, 'id'>): void {
     this.accounts.update((accounts) => [
