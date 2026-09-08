@@ -18,7 +18,7 @@
         <mat-panel-title>Filtros</mat-panel-title>
       </mat-expansion-panel-header>
 
-      <div class="grid gap-4 md:grid-cols-3">
+      <div class="grid gap-4 md:grid-cols-2">
         <mat-form-field>
           <mat-label>Categoria</mat-label>
 
@@ -37,31 +37,22 @@
         </mat-form-field>
 
         <mat-form-field>
-          <mat-label>Data inicial</mat-label>
+          <mat-label>Mês e ano</mat-label>
 
           <input
             matInput
-            [matDatepicker]="startDatePicker"
-            [value]="toDate(startDate())"
-            (dateChange)="onStartDateChange($event.value)"
+            [matDatepicker]="monthPicker"
+            [value]="toDate(selectedMonth())"
+            readonly
           />
 
-          <mat-datepicker-toggle matIconSuffix [for]="startDatePicker" />
-          <mat-datepicker #startDatePicker />
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-label>Data final</mat-label>
-
-          <input
-            matInput
-            [matDatepicker]="endDatePicker"
-            [value]="toDate(endDate())"
-            (dateChange)="onEndDateChange($event.value)"
+          <mat-datepicker-toggle matIconSuffix [for]="monthPicker" />
+          <mat-datepicker
+            #monthPicker
+            startView="multi-year"
+            (yearSelected)="onYearSelected($event)"
+            (monthSelected)="onMonthSelected($event, monthPicker)"
           />
-
-          <mat-datepicker-toggle matIconSuffix [for]="endDatePicker" />
-          <mat-datepicker #endDatePicker />
         </mat-form-field>
       </div>
 
