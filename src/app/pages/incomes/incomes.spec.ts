@@ -54,6 +54,43 @@ describe('Incomes', () => {
     expect(component.filteredIncomes().map((income) => income.id)).toEqual([1]);
   });
 
+  it('should calculate the total for filtered incomes', () => {
+    const currentMonth = getCurrentMonth();
+
+    component.incomesStore.incomes.set([
+      {
+        id: 1,
+        description: 'Salário',
+        amount: 8000,
+        date: `${currentMonth}-05`,
+        accountId: 1,
+        category: 'Salário',
+      },
+      {
+        id: 2,
+        description: 'Freelance',
+        amount: 1500,
+        date: `${currentMonth}-10`,
+        accountId: 1,
+        category: 'Freelance',
+      },
+      {
+        id: 3,
+        description: 'Receita anterior',
+        amount: 200,
+        date: '2025-01-05',
+        accountId: 1,
+        category: 'Outros',
+      },
+    ]);
+
+    expect(component.filteredTotal()).toBe(9500);
+
+    component.selectedCategory.set('Salário');
+
+    expect(component.filteredTotal()).toBe(8000);
+  });
+
   it('should update the selected month and close the datepicker', () => {
     const datepicker = { close: vi.fn() };
 

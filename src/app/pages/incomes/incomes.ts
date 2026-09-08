@@ -17,6 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-incomes',
@@ -46,6 +47,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatInputModule,
     MatDatepickerModule,
     MatExpansionModule,
+    MatTableModule,
   ],
   templateUrl: './incomes.html',
   styleUrl: './incomes.css',
@@ -57,6 +59,14 @@ export class Incomes {
   readonly selectedCategory = signal<string>('');
   readonly selectedMonth = signal<string>(this.toIsoMonth(new Date()));
   readonly categories = ['Salário', 'Freelance', 'Investimentos', 'Outros'] as const;
+  readonly displayedColumns = ['categoryIcon', 'description', 'amount', 'date', 'account', 'actions'];
+
+  private readonly categoryIcons: Record<string, string> = {
+    Salário: 'work',
+    Freelance: 'handyman',
+    Investimentos: 'trending_up',
+    Outros: 'category',
+  };
 
   readonly filteredIncomes = computed(() => {
     const incomes = this.incomesStore.incomes();
@@ -76,6 +86,10 @@ export class Incomes {
       return true;
     });
   });
+
+  readonly filteredTotal = computed(() =>
+    this.filteredIncomes().reduce((total, income) => total + income.amount, 0),
+  );
 
   onCreateIncome(): void {
     const dialogRef = this.dialog.open(IncomeForm, {
@@ -123,6 +137,10 @@ export class Incomes {
 
   getAccountName(accountId: number): string {
     return this.accountsStore.findById(accountId)?.name ?? 'Conta não encontrada';
+  }
+
+  getCategoryIcon(category: string): string {
+    return this.categoryIcons[category] ?? 'category';
   }
 
   clearFilters(): void {
