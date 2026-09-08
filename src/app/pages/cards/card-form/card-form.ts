@@ -1,12 +1,14 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 import { Card } from '../models/card';
 import { CurrencyDirective } from '../../../shared/directives/currency/currency.directive';
+import { AccountsStore } from '../../accounts/services/accounts.store';
 
 @Component({
   selector: 'app-card-form',
@@ -16,6 +18,7 @@ import { CurrencyDirective } from '../../../shared/directives/currency/currency.
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
     CurrencyDirective,
   ],
   templateUrl: './card-form.html',
@@ -26,11 +29,17 @@ export class CardForm {
 
   private readonly dialogRef = inject(MatDialogRef<CardForm>);
 
+  readonly accountsStore = inject(AccountsStore);
+
   readonly card = inject<Card | undefined>(MAT_DIALOG_DATA, { optional: true });
+
+  readonly banks = computed(() => [
+    ...new Set(this.accountsStore.accounts().map((account) => account.bank)),
+  ]);
 
   readonly form = this.formBuilder.nonNullable.group({
     name: [this.card?.name ?? '', Validators.required],
-    institution: [this.card?.institution ?? '', Validators.required],
+    bank: [this.card?.bank ?? '', Validators.required],
     limit: [this.card?.limit ?? 0, [Validators.required, Validators.min(0.01)]],
     closingDay: [
       this.card?.closingDay ?? 1,

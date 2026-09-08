@@ -15,12 +15,16 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Instituição</mat-label>
+      <mat-label>Banco</mat-label>
 
-      <input matInput formControlName="institution" placeholder="Ex.: Banco Principal" />
+      <mat-select formControlName="bank">
+        @for (bank of banks(); track bank) {
+          <mat-option [value]="bank">{{ bank }}</mat-option>
+        }
+      </mat-select>
 
-      @if (form.controls.institution.hasError('required')) {
-        <mat-error> Informe a instituição. </mat-error>
+      @if (form.controls.bank.hasError('required')) {
+        <mat-error> Selecione o banco. </mat-error>
       }
     </mat-form-field>
 
