@@ -66,10 +66,6 @@ export class Incomes {
     });
   });
 
-  readonly filteredTotal = computed(() =>
-    this.filteredIncomes().reduce((total, income) => total + income.amount, 0),
-  );
-
   onCreateIncome(): void {
     const dialogRef = this.dialog.open(IncomeForm, {
       width: '500px',
