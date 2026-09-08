@@ -3,7 +3,7 @@
   <header class="flex items-center justify-between gap-4">
     <div>
       <h1 class="text-2xl font-semibold">Contas</h1>
-      <p>Gerencie suas contas e saldos</p>
+      <p>Gerencie suas contas</p>
     </div>
 
     <button mat-flat-button (click)="onCreateAccount()">
@@ -29,21 +29,9 @@
             </mat-card-title>
 
             <mat-card-subtitle>
-              {{ account.institution }}
+              {{ account.bank }}
             </mat-card-subtitle>
           </mat-card-header>
-
-          <mat-card-content>
-            <div class="mt-4">
-              <mat-chip>
-                {{ getAccountTypeLabel(account.type) }}
-              </mat-chip>
-
-              <p class="mt-4 text-2xl font-semibold">
-                R$ {{ accountBalanceService.balances().get(account.id) ?? 0 | number: '1.2-2' }}
-              </p>
-            </div>
-          </mat-card-content>
 
           <mat-card-actions align="end">
             <button mat-button (click)="onEditAccount(account)">

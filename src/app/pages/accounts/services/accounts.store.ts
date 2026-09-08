@@ -9,24 +9,18 @@ export class AccountsStore {
   readonly accounts = signal<Account[]>([
     {
       id: 1,
-      name: 'Conta Corrente',
-      institution: 'Banco Principal',
-      type: 'checking',
-      balance: 8500,
+      name: 'Conta principal',
+      bank: 'Nubank',
     },
     {
       id: 2,
-      name: 'Poupança',
-      institution: 'Banco Principal',
-      type: 'savings',
-      balance: 3200,
+      name: 'Conta do dia a dia',
+      bank: 'Itaú',
     },
     {
       id: 3,
-      name: 'Carteira',
-      institution: 'Dinheiro físico',
-      type: 'cash',
-      balance: 750,
+      name: 'Conta secundária',
+      bank: 'Banco do Brasil',
     },
   ]);
 

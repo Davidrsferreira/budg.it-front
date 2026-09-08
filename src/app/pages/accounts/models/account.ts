@@ -1,9 +1,7 @@
-export type AccountType = 'checking' | 'savings' | 'cash';
+export type Bank = 'Nubank' | 'Itaú' | 'Banco do Brasil' | 'Inter' | 'Btg Pactual';
 
 export interface Account {
   id: number;
   name: string;
-  institution: string;
-  type: AccountType;
-  balance: number;
+  bank: Bank;
 }
