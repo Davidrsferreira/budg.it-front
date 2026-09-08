@@ -7,44 +7,46 @@
   <section class="grid gap-4 md:grid-cols-3">
     <mat-card>
       <mat-card-header>
-        <mat-icon mat-card-avatar>account_balance_wallet</mat-icon>
-        <mat-card-title>Saldo total</mat-card-title>
-        <mat-card-subtitle>Saldo atual</mat-card-subtitle>
+        <mat-icon mat-card-avatar> account_balance </mat-icon>
+
+        <mat-card-title> Saldo total </mat-card-title>
       </mat-card-header>
 
       <mat-card-content>
-        <p class="text-2xl font-semibold">R$ {{ summary.balance | number: '1.2-2' }}</p>
-        <p>
-          {{ monthlyBalance >= 0 ? '+' : '-' }}
-          R$ {{ monthlyBalanceAbs | number: '1.2-2' }}
-          este mês
+        <p class="text-2xl font-semibold">
+          R$
+          {{ totalBalance() | number: '1.2-2' }}
         </p>
       </mat-card-content>
     </mat-card>
 
     <mat-card>
       <mat-card-header>
-        <mat-icon mat-card-avatar>trending_up</mat-icon>
-        <mat-card-title>Receitas</mat-card-title>
-        <mat-card-subtitle>Este mês</mat-card-subtitle>
+        <mat-icon mat-card-avatar> trending_up </mat-icon>
+
+        <mat-card-title> Receitas </mat-card-title>
       </mat-card-header>
 
       <mat-card-content>
-        <p class="text-2xl font-semibold">R$ {{ summary.income | number: '1.2-2' }}</p>
-        <p>{{ summary.incomeCount }} lançamentos</p>
+        <p class="text-2xl font-semibold">
+          R$
+          {{ totalIncome() | number: '1.2-2' }}
+        </p>
       </mat-card-content>
     </mat-card>
 
     <mat-card>
       <mat-card-header>
-        <mat-icon mat-card-avatar>trending_down</mat-icon>
-        <mat-card-title>Despesas</mat-card-title>
-        <mat-card-subtitle>Este mês</mat-card-subtitle>
+        <mat-icon mat-card-avatar> trending_down </mat-icon>
+
+        <mat-card-title> Despesas </mat-card-title>
       </mat-card-header>
 
       <mat-card-content>
-        <p class="text-2xl font-semibold">R$ {{ summary.expenses | number: '1.2-2' }}</p>
-        <p>{{ summary.expenseCount }} lançamentos</p>
+        <p class="text-2xl font-semibold">
+          R$
+          {{ totalExpenses() | number: '1.2-2' }}
+        </p>
       </mat-card-content>
     </mat-card>
   </section>
@@ -57,7 +59,7 @@
       </mat-card-header>
 
       <mat-card-content>
-        <div echarts [options]="evolutionChartOptions" class="h-72"></div>
+        <div echarts [options]="evolutionChartOptions()" class="h-72"></div>
       </mat-card-content>
     </mat-card>
 
@@ -68,7 +70,7 @@
       </mat-card-header>
 
       <mat-card-content>
-        <div echarts [options]="expensesChartOptions" class="h-72"></div>
+        <div echarts [options]="expensesChartOptions()" class="h-72"></div>
       </mat-card-content>
     </mat-card>
   </section>
