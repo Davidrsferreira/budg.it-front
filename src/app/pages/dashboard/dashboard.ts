@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { NgxEchartsDirective } from 'ngx-echarts';
@@ -7,6 +7,9 @@ import { LineChart, PieChart } from 'echarts/charts';
 import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 import * as echarts from 'echarts/core';
+import { IncomesStore } from '../incomes/services/incomes.store';
+import { ExpensesStore } from '../expenses/services/expenses.store';
+import { AccountBalanceService } from '../accounts/services/account-balance.service';
 
 echarts.use([
   LineChart,
@@ -16,26 +19,6 @@ echarts.use([
   TooltipComponent,
   CanvasRenderer,
 ]);
-
-interface DashboardSummary {
-  balance: number;
-  income: number;
-  expenses: number;
-  incomeCount: number;
-  expenseCount: number;
-}
-
-interface FinancialEvolution {
-  month: string;
-  income: number;
-  expenses: number;
-}
-
-interface ExpenseCategory {
-  category: string;
-  amount: number;
-}
-
 @Component({
   imports: [MatCardModule, MatIconModule, DecimalPipe, NgxEchartsDirective],
   selector: 'app-dashboard',
@@ -43,100 +26,135 @@ interface ExpenseCategory {
   templateUrl: './dashboard.html',
 })
 export class Dashboard {
-  readonly summary: DashboardSummary = {
-    balance: 12450,
-    income: 8500,
-    expenses: 5200,
-    incomeCount: 12,
-    expenseCount: 24,
-  };
+  readonly incomesStore = inject(IncomesStore);
+  readonly expensesStore = inject(ExpensesStore);
+  readonly accountBalanceService = inject(AccountBalanceService);
 
-  readonly monthlyBalance = this.summary.income - this.summary.expenses;
-  readonly monthlyBalanceAbs = Math.abs(this.monthlyBalance);
+  readonly totalBalance = computed(() =>
+    Array.from(this.accountBalanceService.balances().values()).reduce(
+      (total, balance) => total + balance,
+      0,
+    ),
+  );
 
-  readonly evolution: FinancialEvolution[] = [
-    { month: 'Abr', income: 7200, expenses: 4800 },
-    { month: 'Mai', income: 8100, expenses: 5100 },
-    { month: 'Jun', income: 7900, expenses: 5300 },
-    { month: 'Jul', income: 8500, expenses: 4900 },
-    { month: 'Ago', income: 8300, expenses: 5500 },
-    { month: 'Set', income: 8500, expenses: 5200 },
-  ];
+  readonly totalIncome = computed(() =>
+    this.incomesStore.incomes().reduce((total, income) => total + income.amount, 0),
+  );
 
-  readonly evolutionMonths = this.evolution.map((item) => item.month);
-  readonly evolutionIncome = this.evolution.map((item) => item.income);
-  readonly evolutionExpenses = this.evolution.map((item) => item.expenses);
+  readonly totalExpenses = computed(() =>
+    this.expensesStore.expenses().reduce((total, expense) => total + expense.amount, 0),
+  );
 
-  readonly expensesByCategory: ExpenseCategory[] = [
-    { category: 'Moradia', amount: 1800 },
-    { category: 'Alimentação', amount: 1200 },
-    { category: 'Transporte', amount: 700 },
-    { category: 'Lazer', amount: 500 },
-    { category: 'Outros', amount: 1000 },
-  ];
+  readonly evolution = computed(() => {
+    const incomes = this.incomesStore.incomes();
+    const expenses = this.expensesStore.expenses();
 
-  private formatCurrency(value: number): string {
-    return value.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    });
-  }
+    const months = new Map<string, { income: number; expenses: number }>();
 
-  readonly evolutionChartOptions = {
-    tooltip: {
-      trigger: 'axis',
-      valueFormatter: (value: number) => this.formatCurrency(value),
-    },
-    legend: {
-      top: 0,
-    },
+    for (const income of incomes) {
+      const month = income.date.slice(0, 7);
+
+      const current = months.get(month) ?? {
+        income: 0,
+        expenses: 0,
+      };
+
+      current.income += income.amount;
+
+      months.set(month, current);
+    }
+
+    for (const expense of expenses) {
+      const month = expense.date.slice(0, 7);
+
+      const current = months.get(month) ?? {
+        income: 0,
+        expenses: 0,
+      };
+
+      current.expenses += expense.amount;
+
+      months.set(month, current);
+    }
+
+    return Array.from(months.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([month, values]) => ({
+        month,
+        ...values,
+      }));
+  });
+
+  readonly evolutionMonths = computed(() => this.evolution().map((item) => item.month));
+
+  readonly evolutionIncome = computed(() => this.evolution().map((item) => item.income));
+
+  readonly evolutionExpenses = computed(() => this.evolution().map((item) => item.expenses));
+
+  readonly expensesByCategory = computed(() => {
+    const categories = new Map<string, number>();
+
+    for (const expense of this.expensesStore.expenses()) {
+      categories.set(expense.category, (categories.get(expense.category) ?? 0) + expense.amount);
+    }
+
+    return Array.from(categories.entries()).map(([category, amount]) => ({
+      category,
+      amount,
+    }));
+  });
+
+  readonly evolutionChartOptions = computed(() => ({
     xAxis: {
       type: 'category',
-      data: this.evolutionMonths,
+      data: this.evolutionMonths(),
     },
+
     yAxis: {
       type: 'value',
-      axisLabel: {
-        formatter: (value: number) => this.formatCurrency(value),
-      },
     },
+
+    tooltip: {
+      trigger: 'axis',
+    },
+
+    legend: {
+      data: ['Receitas', 'Despesas'],
+    },
+
     series: [
       {
         name: 'Receitas',
         type: 'line',
-        data: this.evolutionIncome,
+        data: this.evolutionIncome(),
       },
       {
         name: 'Despesas',
         type: 'line',
-        data: this.evolutionExpenses,
+        data: this.evolutionExpenses(),
       },
     ],
-  };
+  }));
 
-  readonly expensesChartOptions = {
+  readonly expensesChartOptions = computed(() => ({
     tooltip: {
       trigger: 'item',
-      valueFormatter: (value: number) => this.formatCurrency(value),
     },
 
     legend: {
-      top: 0,
+      orient: 'vertical',
+      left: 'left',
     },
 
     series: [
       {
-        name: 'Despesas',
         type: 'pie',
         radius: '60%',
-        label: {
-          formatter: '{b}: {d}%',
-        },
-        data: this.expensesByCategory.map((item) => ({
+        data: this.expensesByCategory().map((item) => ({
           name: item.category,
           value: item.amount,
         })),
       },
     ],
-  };
+  }));
 }
