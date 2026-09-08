@@ -18,6 +18,7 @@ import { ExpenseForm } from './expense-form/expense-form';
 import { Expense } from './models/expense';
 import { ExpensesStore } from './services/expenses.store';
 import { AccountsStore } from '../accounts/services/accounts.store';
+import { CardsStore } from '../cards/services/cards.store';
 
 @Component({
   selector: 'app-expenses',
@@ -56,6 +57,7 @@ export class Expenses {
   private readonly dialog = inject(MatDialog);
   readonly expensesStore = inject(ExpensesStore);
   readonly accountsStore = inject(AccountsStore);
+  readonly cardsStore = inject(CardsStore);
   readonly selectedCategory = signal<string>('');
   readonly selectedMonth = signal<string>(this.toIsoMonth(new Date()));
   readonly displayedColumns = ['categoryIcon', 'description', 'amount', 'date', 'account', 'actions'];
@@ -147,8 +149,12 @@ export class Expenses {
     });
   }
 
-  getAccountName(accountId: number): string {
-    return this.accountsStore.findById(accountId)?.name ?? 'Conta não encontrada';
+  getPaymentTarget(expense: Expense): string {
+    if (expense.paymentMethod === 'credit') {
+      return this.cardsStore.findById(expense.cardId ?? 0)?.name ?? 'Cartão não encontrado';
+    }
+
+    return this.accountsStore.findById(expense.accountId ?? 0)?.name ?? 'Conta não encontrada';
   }
 
   getCategoryIcon(category: string): string {
