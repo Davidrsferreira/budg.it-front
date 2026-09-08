@@ -15,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-incomes',
@@ -29,6 +30,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatSelectModule,
     MatInputModule,
     MatDatepickerModule,
+    MatExpansionModule,
   ],
   templateUrl: './incomes.html',
   styleUrl: './incomes.css',

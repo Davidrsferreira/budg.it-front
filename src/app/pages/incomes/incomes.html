@@ -13,60 +13,62 @@
   </header>
 
   <section>
-    <mat-card>
-      <mat-card-content>
-        <div class="grid gap-4 md:grid-cols-3">
-          <mat-form-field>
-            <mat-label>Categoria</mat-label>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Filtros</mat-panel-title>
+      </mat-expansion-panel-header>
 
-            <mat-select
-              [value]="selectedCategory()"
-              (selectionChange)="selectedCategory.set($event.value)"
-            >
-              <mat-option value=""> Todas </mat-option>
+      <div class="grid gap-4 md:grid-cols-3">
+        <mat-form-field>
+          <mat-label>Categoria</mat-label>
 
-              @for (category of categories; track category) {
-                <mat-option [value]="category">
-                  {{ category }}
-                </mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+          <mat-select
+            [value]="selectedCategory()"
+            (selectionChange)="selectedCategory.set($event.value)"
+          >
+            <mat-option value=""> Todas </mat-option>
 
-          <mat-form-field>
-            <mat-label>Data inicial</mat-label>
+            @for (category of categories; track category) {
+              <mat-option [value]="category">
+                {{ category }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
 
-            <input
-              matInput
-              [matDatepicker]="startDatePicker"
-              [value]="toDate(startDate())"
-              (dateChange)="onStartDateChange($event.value)"
-            />
+        <mat-form-field>
+          <mat-label>Data inicial</mat-label>
 
-            <mat-datepicker-toggle matIconSuffix [for]="startDatePicker" />
-            <mat-datepicker #startDatePicker />
-          </mat-form-field>
+          <input
+            matInput
+            [matDatepicker]="startDatePicker"
+            [value]="toDate(startDate())"
+            (dateChange)="onStartDateChange($event.value)"
+          />
 
-          <mat-form-field>
-            <mat-label>Data final</mat-label>
+          <mat-datepicker-toggle matIconSuffix [for]="startDatePicker" />
+          <mat-datepicker #startDatePicker />
+        </mat-form-field>
 
-            <input
-              matInput
-              [matDatepicker]="endDatePicker"
-              [value]="toDate(endDate())"
-              (dateChange)="onEndDateChange($event.value)"
-            />
+        <mat-form-field>
+          <mat-label>Data final</mat-label>
 
-            <mat-datepicker-toggle matIconSuffix [for]="endDatePicker" />
-            <mat-datepicker #endDatePicker />
-          </mat-form-field>
-        </div>
+          <input
+            matInput
+            [matDatepicker]="endDatePicker"
+            [value]="toDate(endDate())"
+            (dateChange)="onEndDateChange($event.value)"
+          />
 
-        <div class="flex justify-end">
-          <button mat-button type="button" (click)="clearFilters()">Limpar filtros</button>
-        </div>
-      </mat-card-content>
-    </mat-card>
+          <mat-datepicker-toggle matIconSuffix [for]="endDatePicker" />
+          <mat-datepicker #endDatePicker />
+        </mat-form-field>
+      </div>
+
+      <div class="flex justify-end">
+        <button mat-button type="button" (click)="clearFilters()">Limpar filtros</button>
+      </div>
+    </mat-expansion-panel>
   </section>
 
   <section>
