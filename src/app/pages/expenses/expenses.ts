@@ -5,19 +5,37 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MAT_DATE_FORMATS } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTableModule } from '@angular/material/table';
 
 import { ExpenseDeleteDialog } from './expense-delete-dialog/expense-delete-dialog';
 import { ExpenseForm } from './expense-form/expense-form';
 import { Expense } from './models/expense';
 import { ExpensesStore } from './services/expenses.store';
 import { AccountsStore } from '../accounts/services/accounts.store';
+import { CardsStore } from '../cards/services/cards.store';
 
 @Component({
   selector: 'app-expenses',
+  providers: [
+    {
+      provide: MAT_DATE_FORMATS,
+      useValue: {
+        parse: { dateInput: 'MM/yyyy' },
+        display: {
+          dateInput: 'MM/yyyy',
+          monthYearLabel: 'MMM yyyy',
+          dateA11yLabel: 'MMMM yyyy',
+          monthYearA11yLabel: 'MMMM yyyy',
+        },
+      },
+    },
+  ],
   imports: [
     DecimalPipe,
     DatePipe,
@@ -29,6 +47,8 @@ import { AccountsStore } from '../accounts/services/accounts.store';
     MatSelectModule,
     MatInputModule,
     MatDatepickerModule,
+    MatExpansionModule,
+    MatTableModule,
   ],
   templateUrl: './expenses.html',
   styleUrl: './expenses.css',
@@ -37,9 +57,10 @@ export class Expenses {
   private readonly dialog = inject(MatDialog);
   readonly expensesStore = inject(ExpensesStore);
   readonly accountsStore = inject(AccountsStore);
+  readonly cardsStore = inject(CardsStore);
   readonly selectedCategory = signal<string>('');
-  readonly startDate = signal<string>('');
-  readonly endDate = signal<string>('');
+  readonly selectedMonth = signal<string>(this.toIsoMonth(new Date()));
+  readonly displayedColumns = ['categoryIcon', 'description', 'amount', 'date', 'account', 'actions'];
 
   readonly categories = [
     'Moradia',
@@ -51,23 +72,28 @@ export class Expenses {
     'Outros',
   ] as const;
 
+  private readonly categoryIcons: Record<string, string> = {
+    Moradia: 'home',
+    Alimentação: 'restaurant',
+    Transporte: 'directions_car',
+    Lazer: 'celebration',
+    Saúde: 'health_and_safety',
+    Educação: 'school',
+    Outros: 'category',
+  };
+
   readonly filteredExpenses = computed(() => {
     const expenses = this.expensesStore.expenses();
 
     const category = this.selectedCategory();
-    const startDate = this.startDate();
-    const endDate = this.endDate();
+    const month = this.selectedMonth();
 
     return expenses.filter((expense) => {
       if (category && expense.category !== category) {
         return false;
       }
 
-      if (startDate && expense.date < startDate) {
-        return false;
-      }
-
-      if (endDate && expense.date > endDate) {
+      if (month && !expense.date.startsWith(month)) {
         return false;
       }
 
@@ -123,43 +149,47 @@ export class Expenses {
     });
   }
 
-  getAccountName(accountId: number): string {
-    return this.accountsStore.findById(accountId)?.name ?? 'Conta não encontrada';
+  getPaymentTarget(expense: Expense): string {
+    if (expense.paymentMethod === 'credit') {
+      return this.cardsStore.findById(expense.cardId ?? 0)?.name ?? 'Cartão não encontrado';
+    }
+
+    return this.accountsStore.findById(expense.accountId ?? 0)?.name ?? 'Conta não encontrada';
   }
 
-  toDate(date: string): Date | null {
-    if (!date) {
+  getCategoryIcon(category: string): string {
+    return this.categoryIcons[category] ?? 'category';
+  }
+
+  toDate(month: string): Date | null {
+    if (!month) {
       return null;
     }
 
-    const [year, month, day] = date.split('-').map(Number);
+    const [year, monthNumber] = month.split('-').map(Number);
 
-    return new Date(year, month - 1, day);
+    return new Date(year, monthNumber - 1, 1);
   }
 
-  onStartDateChange(date: Date | null): void {
-    this.startDate.set(this.toIsoDate(date));
+  onYearSelected(date: Date): void {
+    const [, month] = this.selectedMonth().split('-');
+    this.selectedMonth.set(`${date.getFullYear()}-${month}`);
   }
 
-  onEndDateChange(date: Date | null): void {
-    this.endDate.set(this.toIsoDate(date));
-  }
-
-  private toIsoDate(date: Date | null): string {
-    if (!date) {
-      return '';
-    }
-
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
+  onMonthSelected(date: Date, datepicker: MatDatepicker<Date>): void {
+    this.selectedMonth.set(this.toIsoMonth(date));
+    datepicker.close();
   }
 
   clearFilters(): void {
     this.selectedCategory.set('');
-    this.startDate.set('');
-    this.endDate.set('');
+    this.selectedMonth.set(this.toIsoMonth(new Date()));
+  }
+
+  private toIsoMonth(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+
+    return `${year}-${month}`;
   }
 }

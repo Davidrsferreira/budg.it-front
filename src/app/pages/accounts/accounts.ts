@@ -1,17 +1,14 @@
-import { DecimalPipe } from '@angular/common';
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { AccountForm } from './account-form/account-form';
 import { AccountDeleteDialog } from './account-delete-dialog/account-delete-dialog';
 import { Account } from './models/account';
 import { AccountsStore } from './services/accounts.store';
-import { AccountBalanceService } from './services/account-balance.service';
 @Component({
-  imports: [DecimalPipe, MatCardModule, MatIconModule, MatChipsModule, MatButtonModule],
+  imports: [MatCardModule, MatIconModule, MatButtonModule],
   selector: 'app-accounts',
   styleUrl: './accounts.css',
   templateUrl: './accounts.html',
@@ -20,26 +17,6 @@ export class Accounts {
   private readonly dialog = inject(MatDialog);
 
   readonly accountsStore = inject(AccountsStore);
-  readonly accountBalanceService = inject(AccountBalanceService);
-  readonly totalBalance = computed(() =>
-    Array.from(this.accountBalanceService.balances().values()).reduce(
-      (total, balance) => total + balance,
-      0,
-    ),
-  );
-
-  getAccountTypeLabel(type: Account['type']): string {
-    switch (type) {
-      case 'checking':
-        return 'Conta corrente';
-
-      case 'savings':
-        return 'Poupança';
-
-      case 'cash':
-        return 'Dinheiro';
-    }
-  }
 
   onCreateAccount(): void {
     const dialogRef = this.dialog.open(AccountForm, {

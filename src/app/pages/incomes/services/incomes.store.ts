@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 import { Income } from '../models/income';
 
@@ -24,10 +24,6 @@ export class IncomesStore {
       category: 'Freelance',
     },
   ]);
-
-  readonly totalIncome = computed(() =>
-    this.incomes().reduce((total, income) => total + income.amount, 0),
-  );
 
   add(income: Omit<Income, 'id'>): void {
     this.incomes.update((incomes) => [

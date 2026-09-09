@@ -1,7 +1,9 @@
+import { Bank } from '../../accounts/models/account';
+
 export interface Card {
   id: number;
   name: string;
-  institution: string;
+  bank: Bank;
   limit: number;
   closingDay: number;
   dueDay: number;

@@ -10,7 +10,7 @@ export class CardsStore {
     {
       id: 1,
       name: 'Cartão Principal',
-      institution: 'Banco Principal',
+      bank: 'Nubank',
       limit: 10000,
       closingDay: 15,
       dueDay: 22,
@@ -18,7 +18,7 @@ export class CardsStore {
     {
       id: 2,
       name: 'Cartão Secundário',
-      institution: 'Banco Principal',
+      bank: 'Itaú',
       limit: 5000,
       closingDay: 5,
       dueDay: 12,

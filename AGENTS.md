@@ -24,6 +24,7 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 
 ### Components
 
+- ALWAYS use Angular Material for components
 - Keep components small and focused on a single responsibility
 - Use `input()` and `output()` functions instead of decorators
 - Use `model()` for two-way bound properties with `[(prop)]` syntax instead of pairing `input()` with `output()`

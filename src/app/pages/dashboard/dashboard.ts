@@ -9,7 +9,6 @@ import { CanvasRenderer } from 'echarts/renderers';
 import * as echarts from 'echarts/core';
 import { IncomesStore } from '../incomes/services/incomes.store';
 import { ExpensesStore } from '../expenses/services/expenses.store';
-import { AccountBalanceService } from '../accounts/services/account-balance.service';
 
 echarts.use([
   LineChart,
@@ -28,14 +27,8 @@ echarts.use([
 export class Dashboard {
   readonly incomesStore = inject(IncomesStore);
   readonly expensesStore = inject(ExpensesStore);
-  readonly accountBalanceService = inject(AccountBalanceService);
 
-  readonly totalBalance = computed(() =>
-    Array.from(this.accountBalanceService.balances().values()).reduce(
-      (total, balance) => total + balance,
-      0,
-    ),
-  );
+  readonly totalBalance = computed(() => this.totalIncome() - this.totalExpenses());
 
   readonly totalIncome = computed(() =>
     this.incomesStore.incomes().reduce((total, income) => total + income.amount, 0),

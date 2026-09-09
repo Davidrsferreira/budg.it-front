@@ -6,9 +6,8 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { CurrencyDirective } from '../../../shared/directives/currency/currency.directive';
 
-import { Account } from '../models/account';
+import { Account, Bank } from '../models/account';
 
 @Component({
   selector: 'app-account-form',
@@ -19,12 +18,13 @@ import { Account } from '../models/account';
     MatInputModule,
     MatSelectModule,
     ReactiveFormsModule,
-    CurrencyDirective
   ],
   templateUrl: './account-form.html',
   styleUrl: './account-form.css',
 })
 export class AccountForm {
+  readonly banks: Bank[] = ['Nubank', 'Itaú', 'Banco do Brasil', 'Inter', 'Btg Pactual'];
+
   private readonly formBuilder = inject(FormBuilder);
 
   private readonly dialogRef = inject(MatDialogRef<AccountForm>);
@@ -35,9 +35,7 @@ export class AccountForm {
 
   readonly form = this.formBuilder.nonNullable.group({
     name: [this.account?.name ?? '', Validators.required],
-    institution: [this.account?.institution ?? '', Validators.required],
-    type: [this.account?.type ?? 'checking', Validators.required],
-    balance: [this.account?.balance ?? 0, [Validators.required, Validators.min(0)]],
+    bank: [this.account?.bank ?? ('Nubank' as Bank), Validators.required],
   });
 
   get isEditMode(): boolean {

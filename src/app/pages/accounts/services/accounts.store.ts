@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 import { Account } from '../models/account';
 
@@ -9,30 +9,20 @@ export class AccountsStore {
   readonly accounts = signal<Account[]>([
     {
       id: 1,
-      name: 'Conta Corrente',
-      institution: 'Banco Principal',
-      type: 'checking',
-      balance: 8500,
+      name: 'Conta principal',
+      bank: 'Nubank',
     },
     {
       id: 2,
-      name: 'Poupança',
-      institution: 'Banco Principal',
-      type: 'savings',
-      balance: 3200,
+      name: 'Conta do dia a dia',
+      bank: 'Itaú',
     },
     {
       id: 3,
-      name: 'Carteira',
-      institution: 'Dinheiro físico',
-      type: 'cash',
-      balance: 750,
+      name: 'Conta secundária',
+      bank: 'Banco do Brasil',
     },
   ]);
-
-  readonly totalBalance = computed(() =>
-    this.accounts().reduce((total, account) => total + account.balance, 0),
-  );
 
   add(account: Omit<Account, 'id'>): void {
     this.accounts.update((accounts) => [
